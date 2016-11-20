@@ -77,14 +77,16 @@ osmc@osmc:/media/HDD/owncloud/guilhem/files$ sudo ln -s /home/osmc osmc
 osmc@osmc:/media/HDD/owncloud/guilhem/files$ sudo ln -s /media/HDD HDD
 
 #######################################################
+# Create torrent user account
+osmc@osmc:~$ sudo useradd -m torrent
+# Change password to "torrent"
+osmc@osmc:~$ sudo passwd torrent
+
+#######################################################
 # Deluge
 # Install deluge
 osmc@osmc:~$ sudo apt-get install deluged
 osmc@osmc:~$ sudo apt-get install deluge-console
-# Create deluge user account
-osmc@osmc:~$ sudo useradd -m deluge
-# Change password to "deluge"
-osmc@osmc:~$ sudo passwd deluge
 # Create folders for deluge software
 osmc@osmc:~$ sudo su -l deluge
 $ pwd
