@@ -338,11 +338,8 @@ To                         Action      From
 Anywhere on vpn0           DENY IN     Anywhere
 Anywhere (v6) on vpn0      DENY IN     Anywhere (v6)
 
-sudo ufw reset
-sudo ufw deny in on vpn0
-sudo ufw enable
-sudo ufw status verbose
-/usr/bin/sudo /bin/ip netns exec vpn telnet 192.168.100.1 22
+# Test the firewall protection. The following command must be blocked
+/usr/bin/sudo /bin/ip netns exec vpn ssh osmc@192.168.100.1
 
 ##########################################################################################
 # Camera
