@@ -346,3 +346,9 @@ Anywhere (v6) on vpn0      DENY IN     Anywhere (v6)
 osmc@osmc:~$ sudo apt-get install git
 osmc@osmc:~$ git clone https://github.com/silvanmelchior/RPi_Cam_Web_Interface.git
 
+##########################################################################################
+# NFS
+osmc@osmc:~$ sudo apt-get install nfs-kernel-server
+osmc@osmc:~$ sudo vi /etc/exports
+/home/osmc *(rw,all_squash,no_subtree_check,sync)
+osmc@osmc:~$ sudo /etc/init.d/nfs-kernel-server restart
