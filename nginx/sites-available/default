@@ -26,8 +26,14 @@ server {
 
 	# Files
         location /files {
-                autoindex on;
-                alias /home/osmc;
+		autoindex on;
+		alias /home/osmc;
+		client_body_temp_path /media/HDD/tmp/dav;
+		dav_methods PUT DELETE MKCOL COPY MOVE;
+		dav_ext_methods PROPFIND OPTIONS;
+		dav_access user:rw group:rw all:rw;
+		create_full_put_path on;
+		#min_delete_depth 2;
         }
 
 	# Deluge
@@ -78,6 +84,43 @@ server {
         location /jeedom/ {
 		auth_basic off;
                 proxy_pass http://192.168.10.4/;
+        }
+	# Movies
+	location /movies {
+		autoindex on;
+		alias /home/osmc/Movies;
+		client_body_temp_path /media/HDD/tmp/dav;
+		dav_ext_methods PROPFIND OPTIONS;
+		auth_basic off;
+		#auth_basic_user_file /etc/nginx/.htpasswd_movies;
+	}
+        # Musics
+        location /music {
+                autoindex on;
+                alias /home/osmc/Music;
+                client_body_temp_path /media/HDD/tmp/dav;
+                dav_ext_methods PROPFIND OPTIONS;
+                auth_basic_user_file /etc/nginx/.htpasswd_music;
+        }
+	# Pictures
+        location /pictures {
+                autoindex on;
+                alias /home/osmc/Pictures;
+                client_body_temp_path /media/HDD/tmp/dav;
+                dav_ext_methods PROPFIND OPTIONS;
+                auth_basic_user_file /etc/nginx/.htpasswd_pictures;
+        }
+        # Cameras Bourdilot
+        location /camsbt {
+                autoindex on;
+                alias /media/HDD/camsbt;
+                client_body_temp_path /media/HDD/tmp/dav;
+                dav_methods PUT DELETE MKCOL COPY MOVE;
+                dav_ext_methods PROPFIND OPTIONS;
+                dav_access user:rw group:rw all:rw;
+                create_full_put_path on;
+                min_delete_depth 2;
+		auth_basic_user_file /etc/nginx/.htpasswd_camsbt;
         }
 }
 
