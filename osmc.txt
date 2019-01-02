@@ -309,6 +309,11 @@ osmc@osmc:~$ sudo vi /etc/netns/vpn/resolv.conf
 nameserver 208.67.222.222
 nameserver 208.67.220.220-
 
+#######################################################
+# Set capabilities to openvpn
+sudo vi /lib/systemd/system/openvpn@.service
+CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_READ_SEARCH CAP_AUDIT_WRITE CAP_SYS_ADMIN
+
 ##########################################################################################
 # Install firewall to forbit VPN namespace access to default namespace (increase security)
 osmc@osmc:~$ sudo apt-get install ufw
