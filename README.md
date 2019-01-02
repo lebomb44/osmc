@@ -303,6 +303,12 @@ keepalive 10 60
 script-security 2
 up /etc/openvpn/up.sh
 
+
+#######################################################
+# Set capabilities to openvpn
+sudo vi /lib/systemd/system/openvpn@.service
+CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_READ_SEARCH CAP_AUDIT_WRITE CAP_SYS_ADMIN
+
 #######################################################
 # Set DNS in VPN namespace
 osmc@osmc:~$ sudo mkdir /etc/netns
