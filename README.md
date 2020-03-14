@@ -1,5 +1,5 @@
 # Update the operating system
-```shell
+```
 osmc@osmc:~$ sudo apt-get update
 ```
 
@@ -255,35 +255,53 @@ osmc@osmc:/$ sudo update-rc.d deluge-daemon remove
 
 #######################################################
 # Transmission
+```shell
 osmc@osmc:~$ sudo apt-get install transmission-daemon
 osmc@osmc:~$ sudo rm /etc/init.d/transmission-daemon
 osmc@osmc:/$ sudo systemctl disable transmission-daemon
 Removed symlink /etc/systemd/system/multi-user.target.wants/transmission-daemon.service.
 osmc@osmc:/$ sudo systemctl stop transmission-daemon
+```
 
 #######################################################
 # Nginx
+```shell
 osmc@osmc:~$ sudo apt-get install nginx-extras
+```
 # Copy the file "default" in this folder
+```shell
 osmc@osmc:~$ cd /etc/nginx/sites-available/
+```
 # Create html folder
 # Copy the file "default" in this folder
+```shell
 osmc@osmc:/etc/nginx/html$ cd /etc/nginx/
 osmc@osmc:/etc/nginx$ sudo mkdir html
+```
 # Go to HTML folder
+```shell
 osmc@osmc:/etc/nginx$ cd html
+```
 # Copy "index.html", "favicon.png" and folder "css"
 # Create authentification file
+```shell
 osmc@osmc:/etc/nginx/html$ cd /etc/nginx/
 osmc@osmc:/etc/nginx$ sudo htpasswd -c .htpasswd user1
 osmc@osmc:/etc/nginx$ sudo htpasswd .htpasswd user2
+```
 # Edit NGINX configuration file to allow big file upload
+```shell
 osmc@osmc:~$ sudo vi /etc/nginx/nginx.conf
+```
 # Add the following line:
+```shell
         client_max_body_size 100000M;
         server_tokens off;
+```
 # Reboot
+```shell
 osmc@osmc:/etc/nginx$ sudo reboot
+```
 
 #######################################################
 # Kodi
@@ -297,13 +315,16 @@ osmc@osmc:/etc/nginx$ sudo reboot
 
 #######################################################
 # Install OpenVPN and file from your VPN provider
+```shell
 osmc@osmc:~$ sudo apt-get install openvpn
 osmc@osmc:~$ cd /etc/openvpn
 osmc@osmc:/etc/openvpn$ ls
 ca.rsa.4096.crt  crl.rsa.4096.pem  nl.conf  pass.txt  update-resolv-conf
+```
 
 #######################################################
 # Namspaces
+```shell
 osmc@osmc:~$ sudo vi /etc/openvpn/up.sh
 #!/bin/bash
 
@@ -362,32 +383,40 @@ echo "### Launch Deluge server ###"
 /usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
 /usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
 /usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/transmission-daemon -f --log-error &"
+```
 
 ###################################################################
 # Edit nl.conf file to call up.sh script when vpn link is establish
+```shell
 osmc@osmc:~$ sudo vi /etc/openvpn/nl.conf
 route-noexec
 route-nopull
 keepalive 10 60
 script-security 2
 up /etc/openvpn/up.sh
+```
 
 
 #######################################################
 # Set capabilities to openvpn
+```shell
 sudo vi /lib/systemd/system/openvpn@.service
 CapabilityBoundingSet=CAP_IPC_LOCK CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SYS_CHROOT CAP_DAC_READ_SEARCH CAP_AUDIT_WRITE CAP_SYS_ADMIN
+```
 
 #######################################################
 # Set DNS in VPN namespace
+```shell
 osmc@osmc:~$ sudo mkdir /etc/netns
 osmc@osmc:~$ sudo mkdir /etc/netns/vpn
 osmc@osmc:~$ sudo vi /etc/netns/vpn/resolv.conf
 nameserver 208.67.222.222
 nameserver 208.67.220.220-
+```
 
 ##########################################################################################
 # Install firewall to forbit VPN namespace access to default namespace (increase security)
+```shell
 osmc@osmc:~$ sudo apt-get install ufw
 osmc@osmc:~$ sudo ufw default allow outgoing
 Default outgoing policy changed to 'allow'
@@ -414,18 +443,25 @@ To                         Action      From
 --                         ------      ----
 Anywhere on vpn0           DENY IN     Anywhere
 Anywhere (v6) on vpn0      DENY IN     Anywhere (v6)
+```
 
 # Test the firewall protection. The following command must be blocked
+```shell
 /usr/bin/sudo /bin/ip netns exec vpn ssh osmc@192.168.100.1
+```
 
 ##########################################################################################
 # Camera
+```shell
 osmc@osmc:~$ sudo apt-get install git
 osmc@osmc:~$ git clone https://github.com/silvanmelchior/RPi_Cam_Web_Interface.git
+```
 
 ##########################################################################################
 # NFS
+```shell
 osmc@osmc:~$ sudo apt-get install nfs-kernel-server
 osmc@osmc:~$ sudo vi /etc/exports
 /media/HDD *(rw,all_squash,no_subtree_check,sync)
 osmc@osmc:~$ sudo /etc/init.d/nfs-kernel-server restart
+```
