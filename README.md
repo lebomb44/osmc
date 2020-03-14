@@ -66,7 +66,9 @@ Listen 8081
 osmc@osmc:~$ sudo reboot
 ```
 # Open a web navigator ant go to :
+```shell
 http://192.168.10.237:8081/owncloud/
+```
 ## Create the admin user: myusername/mypassword
 ## Data folder should be set to: /media/HDD/owncloud
 ## Database user: root
@@ -75,6 +77,7 @@ http://192.168.10.237:8081/owncloud/
 
 #######################################################
 # Create links to shared folder: Movies, Music...
+```shell
 osmc@osmc:~$ cd
 osmc@osmc:~$ mv Movies Movies.old
 osmc@osmc:~$ mv Music Music.old
@@ -91,26 +94,38 @@ osmc@osmc:~$ ln -s /media/HDD/Movies Movies
 osmc@osmc:~$ ln -s /media/HDD/Music Music
 osmc@osmc:~$ ln -s /media/HDD/Pictures Pictures
 osmc@osmc:~$ ln -s /media/HDD/TV\ Shows TV\ Shows
+```
 # Change rights on HDD
+```shell
 osmc@osmc:~$ cd /media/HDD
 osmc@osmc:/media/HDD$ sudo chmod 777 Movies Music Pictures TV\ Shows
+```
 # Goes into user account and create links to osmc and HDD area:
+```shell
 osmc@osmc:/media/HDD$ cd owncloud/guilhem/files
 osmc@osmc:/media/HDD/owncloud/guilhem/files$ sudo ln -s /home/osmc osmc
 osmc@osmc:/media/HDD/owncloud/guilhem/files$ sudo ln -s /media/HDD HDD
+```
 
 #######################################################
 # Create torrent user account
+```shell
 osmc@osmc:~$ sudo useradd -m torrent
+```
 # Change password to "torrent"
+```shell
 osmc@osmc:~$ sudo passwd torrent
+```
 
 #######################################################
 # Deluge
 # Install deluge
+```shell
 osmc@osmc:~$ sudo apt-get install deluged
 osmc@osmc:~$ sudo apt-get install deluge-console
+```
 # Create folders for deluge software
+```shell
 osmc@osmc:~$ sudo su -l deluge
 $ pwd
 /home/deluge
@@ -118,39 +133,61 @@ $ mkdir log
 $ mkdir config
 $ mkdir run
 $ exit
+```
 # Create deluge configuration file
+```shell
 osmc@osmc:~$ deluged
 osmc@osmc:~$ sudo pkill deluged
 osmc@osmc:~$ ls .config/deluge/
 auth           core.conf      deluged.log    dht.state      plugins/       session.state  ssl/           state/      
+```
 # Add new user to deluge authorization file
+```shell
 osmc@osmc:~$ vi .config/deluge/auth
 remoteDelugeUser:remoteDelugePassword:10
 (user:password:level)
+```
 # Reboot
+```shell
 osmc@osmc:~$ sudo reboot
+```
 # Launch deluge server
+```shell
 osmc@osmc:~$ deluged
+```
 # Allow remote access
+```shell
 osmc@osmc:~$ deluge-console
 config -s allow_remote True
 config allow_remote
 exit
 osmc@osmc:~$ sudo pkill deluged
+```
 # Install web UI
+```shell
 osmc@osmc:~$ sudo apt-get install python-mako
 osmc@osmc:~$ sudo apt-get install deluge-web
+```
 # Create web UI configuration file
+```shell
 osmc@osmc:~$ deluge-web
+```
 # Wait 1 minute
+```shell
 CTRL+C
 osmc@osmc:~$ ls -als .config/deluge/web.conf
+```
 # Copy configuration files to deluge home folder
+```shell
 osmc@osmc:~$ sudo cp -R .config/deluge/* /home/deluge/config/.
 osmc@osmc:~$ sudo chown -R deluge:deluge /home/deluge/config
+```
 # Run deluge at startup
+```shell
 osmc@osmc:~$ sudo wget -O /etc/default/deluge-daemon http://www.howtogeek.com/wp-content/uploads/gg/up/sshot5151a8c86fb85.txt
+```
 # Edit file /etc/default/deluge-daemon and change user to "deluge"
+```shell
 osmc@osmc:~$ sudo vi /etc/default/deluge-daemon
 DELUGED_USER="deluge"             # !!!CHANGE THIS!!!!
 ### Deprecated ### # Get the startup script
@@ -165,14 +202,21 @@ DELUGED_USER="deluge"             # !!!CHANGE THIS!!!!
 ### Deprecated ### PIDFILE1=/home/deluge/run/$NAME1.pid
 ### Deprecated ### PIDFILE2=/home/deluge/run/$NAME2.pid
 ### Deprecated ### UMASK=000                     # Change this to 0 if running deluged as its own user  
+```
 # Remove auto installed script
+```shell
 osmc@osmc:~$ sudo update-rc.d deluged remove
 osmc@osmc:~$ sudo rm /etc/init.d/deluged
 osmc@osmc:~$ sudo rm /etc/default/deluged
+```
 # Reboot
+```shell
 osmc@osmc:~$ sudo reboot
+```
 # Open a web navigator on port 8112
+```shell
 http://192.168.10.237:8112/
+```
 # Default password is "deluge"
 # After the connection, go to "Preferences" and change the following:
 ## Downloads:
@@ -195,15 +239,19 @@ Outgoing Ports: From 6870 To: 6880
 ### Tracker: Socksv5 / 82.75.161.197 / 48111
 ### DHT: Socksv5 / 82.75.161.197 / 48111
 ## Download plugins fom deluge repository:
+```shell
 https://github.com/ratanakvlun/deluge-ltconfig/releases/download/v0.2.5.0/ltConfig-0.2.5.0-py2.7.egg
+```
 ## Plugins: ItConfig
 ## ItConfig:
 ### Check "user_agent" and change to "none"
 
+```shell
 osmc@osmc:/$ sudo update-rc.d deluge-daemon disable
 insserv: warning: current start runlevel(s) (empty) of script `deluge-daemon' overrides LSB defaults (2 3 4 5).
 insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `deluge-daemon' overrides LSB defaults (0 1 6).
 osmc@osmc:/$ sudo update-rc.d deluge-daemon remove
+```
 
 #######################################################
 # Transmission
