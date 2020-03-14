@@ -4,46 +4,67 @@ osmc@osmc:~$ sudo apt-get update
 ```
 
 # Before connecting the hard disk:
-## Enable the high current on USB: Add "max_usb_current=1" in /boot/config.txt
+## Enable the high current on USB:
+```shell
+Add "max_usb_current=1" in /boot/config.txt
+```
 ## Format the hard disk to EXT4
 
 # Connect the hard disk on a USB port
 # Get the UUID of the disk
+```shell
 osmc@osmc:~$ sudo blkid /dev/sda1
 /dev/sda1: LABEL="HDD" UUID="7d59e0e6-f886-458f-83ed-0841885af0a2" TYPE="ext4" PARTUUID="809d1d5b-01"
+```
 
 # Automount the HDD. Edit the /etc/fstab and add the following line:
+```shell
 UUID=7d59e0e6-f886-458f-83ed-0841885af0a2 /media/HDD ext4 defaults,noatime 0 2
+```
 
 # Reboot to test the automount
 
 #######################################################
 # Shell In A Box
+```shell
 osmc@osmc:~$ sudo apt-get install shellinabox
+```
 # Edit the file 
+```shell
 osmc@osmc:~$ sudo vi /etc/default/shellinabox
+```
 # Add a "-t" at the end of the last line:
+```shell
 SHELLINABOX_ARGS="--no-beep -t"
+```
 # Reboot to test that the service a started and listen on port 4200
 # Open a web navigator on port 4200
 
 #######################################################
 # OnwCloud
+```shell
 osmc@osmc:~$ sudo apt-get install owncloud
 osmc@osmc:~$ sudo apt-get install mysql-server
+```
 And set mysql root password: osmc
 # Edit file /etc/php5/apache2/php.ini
+```shell
 osmc@osmc:~$ sudo vi /etc/php5/apache2/php.ini
 post_max_size = 100000M
 upload_max_filesize = 100000M
 osmc@osmc:~$ sudo vi /etc/owncloud/htaccess
 php_value upload_max_filesize 100000M
 php_value post_max_size 100000M
+```
 # Change listen port to 8081 in the file 
+```shell
 osmc@osmc:~$ sudo vi /etc/apache2/ports.conf
 Listen 8081
+```
 # Reboot
+```shell
 osmc@osmc:~$ sudo reboot
+```
 # Open a web navigator ant go to :
 http://192.168.10.237:8081/owncloud/
 ## Create the admin user: myusername/mypassword
