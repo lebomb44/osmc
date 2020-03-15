@@ -380,9 +380,9 @@ echo "### Show the result of the configuration ###"
 
 echo "############################"
 echo "### Launch Deluge server ###"
-/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
-/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
-/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/transmission-daemon -f --log-error &"
+#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
+#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
+/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/transmission-daemon -f --log-error &"
 ```
 
 ###################################################################
