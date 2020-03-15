@@ -465,3 +465,12 @@ osmc@osmc:~$ sudo vi /etc/exports
 /media/HDD *(rw,all_squash,no_subtree_check,sync)
 osmc@osmc:~$ sudo /etc/init.d/nfs-kernel-server restart
 ```
+
+##########################################################################################
+# CRONTAB
+```shell
+osmc@osmc:~$ sudo apt-get install cron
+osmc@osmc:~$ crontab -e
+0 1 * * 5 /usr/bin/sudo /sbin/reboot
+```
+
