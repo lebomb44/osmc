@@ -476,10 +476,15 @@ osmc@osmc:~$ crontab -e
 
 ##########################################################################################
 # lbGate
+
+Create symbolic link to serial port
 ```shell
 osmc@osmc:~$ sudo apt-get install usbutils
 osmc@osmc:~$ sudo nano /etc/udev/rules.d/90-rpi-add-serial.rules
 SUBSYSTEM=="tty", ATTRS{devpath}=="1.2", SYMLINK+="volume", RUN+="/bin/stty -F /dev/volume -parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr -icrnl -ixon -ixoff -iuclc -ixany -imaxbel iutf8 -opost -olcuc -ocrnl -onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0 -isig -icanon iexten -echo -echoe -echok -echonl noflsh -xcase -tostop -echoprt -echoctl -echoke min 0 time 0 speed 115200"
 ```
 
-
+Enable lbGate service
+```shell
+osmc@osmc:~$ sudo update-rc.d lbGate enable
+```
