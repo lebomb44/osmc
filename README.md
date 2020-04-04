@@ -486,5 +486,5 @@ SUBSYSTEM=="tty", ATTRS{devpath}=="1.2", SYMLINK+="volume", RUN+="/bin/stty -F /
 
 Enable lbGate service
 ```shell
-osmc@osmc:~$ sudo update-rc.d lbGate enable
+osmc@osmc:~$ sudo update-rc.d lbGate defaults
 ```
