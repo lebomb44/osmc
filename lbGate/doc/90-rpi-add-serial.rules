@@ -1,0 +1,23 @@
+KERNEL=="ttyAMA[01]", PROGRAM="/bin/sh -c '\
+        ALIASES=/proc/device-tree/aliases; \
+        if [ $(cat $ALIASES/uart0) = $(cat $ALIASES/serial0) ]; then \
+            echo 0;\
+        elif [ $(cat $ALIASES/uart0) = $(cat $ALIASES/serial1) ]; then \
+            echo 1; \
+        else \
+            exit 1; \
+        fi\
+    '", SYMLINK+="serial%c"
+
+KERNEL=="ttyS0", PROGRAM="/bin/sh -c '\
+        ALIASES=/proc/device-tree/aliases; \
+        if [ $(cat $ALIASES/uart1) = $(cat $ALIASES/serial0) ]; then \
+            echo 0; \
+        elif [ $(cat $ALIASES/uart1) = $(cat $ALIASES/serial1) ]; then \
+            echo 1; \
+        else \
+            exit 1; \
+        fi \
+    '", SYMLINK+="serial%c"
+
+SUBSYSTEM=="tty", ATTRS{devpath}=="1.2", SYMLINK+="volume", RUN+="/bin/stty -F /dev/volume -parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr -icrnl -ixon -ixoff -iuclc -ixany -imaxbel iutf8 -opost -olcuc -ocrnl -onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0 -isig -icanon iexten -echo -echoe -echok -echonl noflsh -xcase -tostop -echoprt -echoctl -echoke min 0 time 0 speed 115200"
