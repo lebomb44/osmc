@@ -139,7 +139,7 @@ server {
 		alias /home/osmc/Pictures;
 		client_body_temp_path /media/HDD/tmp/dav;
 		##dav_ext_methods PROPFIND OPTIONS;
-		auth_basic_user_file /etc/nginx/.htpasswd_pictures;
+		#auth_basic_user_file /etc/nginx/.htpasswd_pictures;
 	}
 	# Cameras Bourdilot
 	#location /camsbt {
