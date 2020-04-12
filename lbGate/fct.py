@@ -41,3 +41,9 @@ def timeout_reset(node_, cmd_, arg_array_):
         settings.node_list[node_].error_cnt_max = settings.node_list[node_].error_cnt
     settings.node_list[node_].error_cnt = 0
     settings.node_list[node_].ping_rx_cnt += 1
+
+
+def debugPrint(node_, cmd_, arg_array_):
+    """" Print debug information from node """
+    log("DEBUG: node=" + node_ + " cmd=" + cmd_ + " str=" + str(arg_array_))
+

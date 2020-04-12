@@ -16,12 +16,16 @@ HTTPD_PORT = 8444
 MAX_NODE_ERRORS = 10000
 
 node_list = dict(
-    volume=lbserial.Serial('volume'))
+    volcontrol=lbserial.Serial('volcontrol'))
 
 
 acq = dict({
-    'volume': {
-        'ping': {'val': 0, 'fct': "timeout_reset"}
+    'volcontrol': {
+        'ping': {'val': 0, 'fct': "timeout_reset"},
+        'vol': {'val': 0},
+        'bal': {'val': 0},
+        'power': {'val': 0},
+        'debug': {'fct': "debugPrint"}
     }
 })
 

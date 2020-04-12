@@ -149,10 +149,12 @@ class Serial(threading.Thread):
         try:
             fct.log("Opening " + self.node_name)
             self.fd_port = open(self.port, "rb+", buffering=0)
+            fct.log("Fct open done")
             fd_port = self.fd_port.fileno()
             flag = fcntl.fcntl(fd_port, fcntl.F_GETFL)
             fcntl.fcntl(fd_port, fcntl.F_SETFL, flag | os.O_NONBLOCK)
             self.open_cnt += 1
+            fct.log(self.node_name + " opened correctly")
         except Exception as ex:
             fct.log_exception(ex)
 
@@ -183,7 +185,6 @@ class Serial(threading.Thread):
         if settings.MAX_NODE_ERRORS > self.error_cnt:
             self.error_cnt += 1
         if settings.MAX_NODE_ERRORS == self.error_cnt:
-            fct.send_alert("Timeout on serial node " + self.node_name)
             self.error_cnt += 1
             self.close()
             time.sleep(1.0)
