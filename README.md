@@ -325,27 +325,36 @@ ca.rsa.4096.crt  crl.rsa.4096.pem  nl.conf  pass.txt  update-resolv-conf
 #######################################################
 # Namspaces
 ```shell
-osmc@osmc:~$ sudo vi /etc/openvpn/up.sh
+osmc@osmc:~$ cat /home/osmc/up.sh
 #!/bin/bash
+
+tdpid=`/usr/bin/sudo /bin/pidof transmission-daemon`
+if [ $? -eq 0 ]; then
+	#echo "Transmission Daemon already running"
+	exit 1
+fi
 
 echo "#################################"
 echo "### Remove old process if any ###"
-/usr/bin/sudo /usr/bin/pkill deluged
+/usr/bin/sudo /usr/bin/pkill transmission-daemon
 echo "#############################################"
 echo "### Remove all default routes in VPN namespace if any ###"
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip route flush 0/0
+/usr/bin/sudo /bin/ip netns
 
 echo "##############################"
 echo "### Creating VPN namespace ###"
 /usr/bin/sudo /bin/ip netns add vpn
-/usr/bin/sudo /bin/ip netns 
+sleep 1
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip link list
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip link set dev lo up
 
 echo "###########################"
 echo "### Creating inter link ###"
 /usr/bin/sudo /bin/ip link add vpn0 type veth peer name vpn1
+sleep 1
 /usr/bin/sudo /bin/ip link set vpn1 netns vpn
+sleep 1
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip link list
 
 echo "##############################"
@@ -357,15 +366,15 @@ echo "### Setting inter link IPs ###"
 
 echo "####################################"
 echo "### Get data from tun0 interface ###"
-TUN0_ADDR=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'inet addr:\K\S+'`
-TUN0_PTP=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'P-t-P:\K\S+'`
-TUN0_MASK=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'Mask:\K\S+'`
+TUN0_ADDR=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'inet \K\S+'`
+TUN0_PTP=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'destination \K\S+'`
+TUN0_MASK=`/usr/bin/sudo /sbin/ifconfig tun0 | grep -oP 'netmask \K\S+'`
 echo "TUN0 ADDR = $TUN0_ADDR"
 echo "TUN0 PTP = $TUN0_PTP"
 echo "TUN0 MASK = $TUN0_MASK"
 
 echo "#########################################"
-echo "### Trasnfering TUN0 to VPN namespace ###"
+echo "### Transfering TUN0 to VPN namespace ###"
 /usr/bin/sudo /bin/ip link set tun0 netns vpn
 echo "#################################"
 echo "###Configuring TUN0 interface ###"
@@ -380,20 +389,41 @@ echo "### Show the result of the configuration ###"
 
 echo "############################"
 echo "### Launch Deluge server ###"
-#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
-#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su deluge -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
-/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/transmission-daemon -f --log-error &"
+#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
+#/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
+/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/transmission-daemon -f --log-error --log-info --log-debug -g /home/torrent/.config/transmission-daemon &"
+
 ```
 
 ###################################################################
 # Edit nl.conf file to call up.sh script when vpn link is establish
 ```shell
 osmc@osmc:~$ sudo vi /etc/openvpn/nl.conf
+#log /var/log/openvpn.log
+client
+dev tun
+proto udp
+remote nl.privateinternetaccess.com 1197
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+cipher aes-256-cbc
+auth sha256
+tls-client
+remote-cert-tls server
+auth-user-pass pass.txt
+comp-lzo
+verb 1
+reneg-sec 0
+crl-verify crl.rsa.4096.pem
+ca ca.rsa.4096.crt
+disable-occ
 route-noexec
 route-nopull
 keepalive 10 60
 script-security 2
-up /etc/openvpn/up.sh
+#up /etc/openvpn/up.sh
 ```
 
 
@@ -472,6 +502,7 @@ osmc@osmc:~$ sudo /etc/init.d/nfs-kernel-server restart
 osmc@osmc:~$ sudo apt-get install cron
 osmc@osmc:~$ crontab -e
 0 1 * * 5 /usr/bin/sudo /sbin/reboot
+*/5 * * * * /home/osmc/up.sh
 ```
 
 ##########################################################################################
