@@ -45,12 +45,22 @@ server {
 	location /files {
 		autoindex on;
 		alias /home/osmc;
-		client_body_temp_path /media/HDD/tmp/dav;
-		dav_methods PUT DELETE MKCOL COPY MOVE;
+		#client_body_temp_path /media/HDD/tmp/dav;
+		#dav_methods PUT DELETE MKCOL COPY MOVE;
 		##dav_ext_methods PROPFIND OPTIONS;
-		dav_access user:rw group:rw all:rw;
-		create_full_put_path on;
+		#dav_access user:rw group:rw all:rw;
+		#create_full_put_path on;
 		#min_delete_depth 2;
+	}
+	location /explore {
+		alias /home/osmc;
+		try_files $uri $uri/ /index.php$is_args$args;
+
+		location ~ \.php$ {
+			include snippets/fastcgi-php.conf;
+			fastcgi_param SCRIPT_FILENAME $request_filename;
+			fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+		}
 	}
 
 	# Deluge
@@ -65,6 +75,7 @@ server {
 		proxy_set_header Connection "";
 		proxy_pass_header X-Transmission-Session-Id;
 		proxy_pass http://192.168.100.2:9091;
+		auth_basic_user_file /etc/nginx/.htpasswd;
 	}
 
 	# Orange                                               
@@ -119,7 +130,7 @@ server {
 	location /movies {
 		autoindex on;
 		alias /home/osmc/Movies;
-		client_body_temp_path /media/HDD/tmp/dav;
+		#client_body_temp_path /media/HDD/tmp/dav;
 		##dav_ext_methods PROPFIND OPTIONS;
 		auth_basic off;
 		#auth_basic_user_file /etc/nginx/.htpasswd_movies;
@@ -128,7 +139,7 @@ server {
 	location /music {
 		autoindex on;
 		alias /home/osmc/Music;
-		client_body_temp_path /media/HDD/tmp/dav;
+		#client_body_temp_path /media/HDD/tmp/dav;
 		##dav_ext_methods PROPFIND OPTIONS;
 		auth_basic off;
 		#auth_basic_user_file /etc/nginx/.htpasswd_music;
@@ -137,7 +148,7 @@ server {
 	location /pictures {
 		autoindex on;
 		alias /home/osmc/Pictures;
-		client_body_temp_path /media/HDD/tmp/dav;
+		#client_body_temp_path /media/HDD/tmp/dav;
 		##dav_ext_methods PROPFIND OPTIONS;
 		#auth_basic_user_file /etc/nginx/.htpasswd_pictures;
 	}
