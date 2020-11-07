@@ -1,17 +1,23 @@
 #!/bin/bash
 
+tdpid=`/usr/bin/sudo /bin/pidof transmission-daemon`
+if [ $? -eq 0 ]; then
+	#echo "Transmission Daemon already running"
+	exit 1
+fi
+
 echo "#################################"
 echo "### Remove old process if any ###"
-/usr/bin/sudo /usr/bin/pkill deluged
+/usr/bin/sudo /usr/bin/pkill transmission-daemon
 echo "#############################################"
 echo "### Remove all default routes in VPN namespace if any ###"
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip route flush 0/0
+/usr/bin/sudo /bin/ip netns
 
 echo "##############################"
 echo "### Creating VPN namespace ###"
 /usr/bin/sudo /bin/ip netns add vpn
 sleep 1
-/usr/bin/sudo /bin/ip netns 
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip link list
 /usr/bin/sudo /bin/ip netns exec vpn /bin/ip link set dev lo up
 
@@ -40,7 +46,7 @@ echo "TUN0 PTP = $TUN0_PTP"
 echo "TUN0 MASK = $TUN0_MASK"
 
 echo "#########################################"
-echo "### Trasnfering TUN0 to VPN namespace ###"
+echo "### Transfering TUN0 to VPN namespace ###"
 /usr/bin/sudo /bin/ip link set tun0 netns vpn
 echo "#################################"
 echo "###Configuring TUN0 interface ###"
@@ -57,5 +63,5 @@ echo "############################"
 echo "### Launch Deluge server ###"
 #/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/python /usr/bin/deluged -d -c /home/deluge/config -l /home/deluge/deluged.log -L info &"
 #/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/python /usr/bin/deluge-web -c /home/deluge/config -l /home/deluge/deluge-web.log -L info &"
-/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/transmission-daemon -f --log-error &"
+/usr/bin/sudo /bin/ip netns exec vpn /usr/bin/sudo /bin/su torrent -c "/usr/bin/transmission-daemon -f --log-error --log-info --log-debug -g /home/torrent/.config/transmission-daemon &"
 

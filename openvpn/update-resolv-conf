@@ -15,7 +15,11 @@
 #     foreign_option_3='dhcp-option DOMAIN be.bnc.ch'
 #
 
-[ -x /sbin/resolvconf ] || exit 0
+if [ ! -x /sbin/resolvconf ] ; then
+    logger "[OpenVPN:update-resolve-conf] missing binary /sbin/resolvconf";
+    exit 0;
+fi
+
 [ "$script_type" ] || exit 0
 [ "$dev" ] || exit 0
 
@@ -30,7 +34,8 @@ case "$script_type" in
   up)
 	NMSRVRS=""
 	SRCHS=""
-	for optionvarname in ${!foreign_option_*} ; do
+	foreign_options=$(printf '%s\n' ${!foreign_option_*} | sort -t _ -k 3 -g)
+	for optionvarname in ${foreign_options} ; do
 		option="${!optionvarname}"
 		echo "$option"
 		split_into_parts $option
