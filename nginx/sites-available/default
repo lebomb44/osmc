@@ -126,6 +126,21 @@ server {
 	#	auth_basic off;
 	#	proxy_pass http://192.168.10.4:8444/;
 	#}
+	location /cams/ {
+		# Disable gzip (it makes scripts feel slower since they have to complete
+		# before getting gzipped
+		gzip off;
+		auth_basic off;
+		# Set the root to /usr/lib (inside this location this means that we are
+		# giving access to the files under /usr/lib/cgi-bin)
+		alias /home/osmc/workspace/reolink/;
+		# Fastcgi socket
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+		# Fastcgi parameters, include the standard ones
+		include /etc/nginx/fastcgi_params;
+		# Adjust non standard parameters (SCRIPT_FILENAME)
+		fastcgi_param SCRIPT_FILENAME $request_filename;
+        }
 	# Movies
 	location /movies {
 		autoindex on;
