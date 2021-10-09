@@ -114,7 +114,11 @@ server {
 	}
 	# Camera Entry
 	location /camentry/ {
-		proxy_pass http://192.168.10.7/;
+		proxy_pass http://192.168.10.151/;
+	}
+	# Camera Facade
+	location /camfacade/ {
+		proxy_pass http://192.168.10.152/;
 	}
 	# Jeedom
 	location /jeedom/ {
@@ -138,6 +142,9 @@ server {
 		fastcgi_pass unix:/var/run/fcgiwrap.socket;
 		# Fastcgi parameters, include the standard ones
 		include /etc/nginx/fastcgi_params;
+		fastcgi_buffering off;
+		fastcgi_read_timeout 120s;
+		fastcgi_send_timeout 120s;
 		# Adjust non standard parameters (SCRIPT_FILENAME)
 		fastcgi_param SCRIPT_FILENAME $request_filename;
         }
