@@ -323,7 +323,7 @@ ca.rsa.4096.crt  crl.rsa.4096.pem  nl.conf  pass.txt  update-resolv-conf
 ```
 
 #######################################################
-# Namspaces
+# Namespaces
 ```shell
 osmc@osmc:~$ cat /home/osmc/up.sh
 #!/bin/bash
@@ -522,4 +522,11 @@ SUBSYSTEM=="tty", ATTRS{devpath}=="1.2", SYMLINK+="volume", RUN+="/bin/stty -F /
 Enable lbGate service
 ```shell
 osmc@osmc:~$ sudo update-rc.d lbGate defaults
+```
+
+#######################################################
+# HTTPS certificate from Let's Encrypt
+```shell
+osmc@osmc:~$ sudo apt install certbot python3-certbot-nginx
+osmc@osmc:~$ sudo certbot certonly --nginx
 ```
