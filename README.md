@@ -503,6 +503,10 @@ osmc@osmc:~$ sudo apt-get install cron
 osmc@osmc:~$ crontab -e
 0 1 * * 5 /usr/bin/sudo /sbin/reboot
 */5 * * * * /home/osmc/up.sh
+0 * * * * /home/osmc/check-services.sh > /tmp/check-services.log
+#0 2 * * * /home/osmc/workspace/reolink/rsync_records.py > /tmp/reolink_rsync_records.log
+#0 6 * * * /home/osmc/workspace/reolink/timelapse.py > /tmp/reolink_timelapse.log
+0 2 * * * /usr/bin/sudo /usr/bin/certbot renew --quiet
 ```
 
 ##########################################################################################
