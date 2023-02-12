@@ -323,7 +323,7 @@ ca.rsa.4096.crt  crl.rsa.4096.pem  nl.conf  pass.txt  update-resolv-conf
 ```
 
 #######################################################
-# Namspaces
+# Namespaces
 ```shell
 osmc@osmc:~$ cat /home/osmc/up.sh
 #!/bin/bash
@@ -503,6 +503,10 @@ osmc@osmc:~$ sudo apt-get install cron
 osmc@osmc:~$ crontab -e
 0 1 * * 5 /usr/bin/sudo /sbin/reboot
 */5 * * * * /home/osmc/up.sh
+0 * * * * /home/osmc/check-services.sh > /tmp/check-services.log
+#0 2 * * * /home/osmc/workspace/reolink/rsync_records.py > /tmp/reolink_rsync_records.log
+#0 6 * * * /home/osmc/workspace/reolink/timelapse.py > /tmp/reolink_timelapse.log
+0 2 * * * /usr/bin/sudo /usr/bin/certbot renew --quiet
 ```
 
 ##########################################################################################
@@ -518,4 +522,11 @@ SUBSYSTEM=="tty", ATTRS{devpath}=="1.2", SYMLINK+="volume", RUN+="/bin/stty -F /
 Enable lbGate service
 ```shell
 osmc@osmc:~$ sudo update-rc.d lbGate defaults
+```
+
+#######################################################
+# HTTPS certificate from Let's Encrypt
+```shell
+osmc@osmc:~$ sudo apt install certbot python3-certbot-nginx
+osmc@osmc:~$ sudo certbot certonly --nginx
 ```
