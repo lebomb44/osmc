@@ -9,7 +9,7 @@ server {
 	server_tokens off;
 	server_name home.lebomb.fr;
 	#ssl_certificate /etc/nginx/ssl/localhost.crt;
-	ssl_certificate /etc/letsencrypt/live/home.example.com/fullchain.pem;
+	ssl_certificate /etc/letsencrypt/live/home.lebomb.fr/fullchain.pem;
 	#ssl_certificate_key /etc/nginx/ssl/localhost.key;
 	ssl_certificate_key /etc/letsencrypt/live/home.lebomb.fr/privkey.pem;
 	#ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
@@ -39,12 +39,6 @@ server {
 		proxy_pass http://localhost:4200/;
 	}
 
-	# Onwcloud
-	#location /owncloud {
-	#	auth_basic off;
-	#	proxy_pass http://localhost:8081;
-	#}
-
 	# Files
 	location /files {
 		autoindex on;
@@ -56,14 +50,15 @@ server {
 		#create_full_put_path on;
 		#min_delete_depth 2;
 	}
-	location /explore {
+
+	location /cloud {
 		alias /home/osmc;
 		try_files $uri $uri/ /index.php$is_args$args;
 
 		location ~ \.php$ {
 			include snippets/fastcgi-php.conf;
 			fastcgi_param SCRIPT_FILENAME $request_filename;
-			fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+			fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
 		}
 	}
 
