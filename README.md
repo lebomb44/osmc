@@ -530,3 +530,35 @@ osmc@osmc:~$ sudo update-rc.d lbGate defaults
 osmc@osmc:~$ sudo apt install certbot python3-certbot-nginx
 osmc@osmc:~$ sudo certbot certonly --nginx
 ```
+
+#######################################################
+# Public account
+Create pulic user account
+```shell
+osmc@osmc:~$ sudo useradd -m public
+osmc@osmc:~$ sudo chown root:root /home/public
+osmc@osmc:~$ sudo chmod 755 /home/public
+```
+Limit usage to SFTP only
+```shell
+osmc@osmc:~$ sudo vi /etc/ssh/sshd_config
+#Subsystem sftp /usr/lib/openssh/sftp-server
+Subsystem sftp internal-sftp
+
+Match User public
+    ChrootDirectory %h
+    ForceCommand internal-sftp
+    AllowTCPForwarding no
+    X11Forwarding no
+```
+Create mounting points
+```shell
+osmc@osmc:~$ sudo mkdir /home/public/Movies
+osmc@osmc:~$ sudo mkdir /home/public/Music
+```
+Mount folders at startup
+```shell
+osmc@osmc:~$ sudo vi /etc/fstab
+/media/HDD/Movies /home/public/Movies none bind,ro
+/media/HDD/Music /home/public/Music none bind,ro
+```
