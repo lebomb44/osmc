@@ -1,0 +1,27 @@
+::1             osmc localhost6.localdomain6 localhost6
+127.0.1.1       osmc
+
+
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+192.168.10.1	box
+192.168.10.2	wifi
+192.168.10.4	jeedom
+#192.168.10.5	osmc kodi
+192.168.10.6	poe
+192.168.10.9	printer
+192.168.10.151	salon
+192.168.10.152	couloir
+192.168.10.153	cuisine
+192.168.10.154	arriere
+192.168.10.155	avant
+192.168.10.156	chambre
+192.168.10.157	galerie
+192.168.10.158	panoramix
+192.168.10.159	entree
+
