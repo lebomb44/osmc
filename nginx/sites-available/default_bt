@@ -205,3 +205,21 @@ server {
 		proxy_pass http://192.168.10.6/;
 	}
 }
+
+
+
+
+
+	# Kodi Web interface
+	location /addons {
+		proxy_pass http://localhost:8080;
+	}
+	location /jsonrpc {
+		proxy_pass http://localhost:8080;
+	}
+	location /image {
+		proxy_pass http://localhost:8080;
+	}
+	location /vfs {
+		proxy_pass http://localhost:8080;
+	}

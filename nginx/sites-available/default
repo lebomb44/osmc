@@ -8,182 +8,141 @@ server {
 	listen 443 default_server ssl;
 	server_tokens off;
 	server_name home.lebomb.fr;
-	#ssl_certificate /etc/nginx/ssl/localhost.crt;
 	ssl_certificate /etc/letsencrypt/live/home.lebomb.fr/fullchain.pem;
-	#ssl_certificate_key /etc/nginx/ssl/localhost.key;
 	ssl_certificate_key /etc/letsencrypt/live/home.lebomb.fr/privkey.pem;
-	#ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
-	#ssl_ciphers         HIGH:!aNULL:!MD5;
 	include /etc/letsencrypt/options-ssl-nginx.conf;
-	#more_set_headers "Server: none";
 	auth_basic "Restricted";                                              
 	auth_basic_user_file /etc/nginx/.htpasswd;
 	location / {
 		root /etc/nginx/html;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		set $auth_basic Restricted;
+		#if ($cookie_redirect = "box") {
+		#	set $auth_basic off;
+		#	add_header Set-Cookie "redirect=box;Path=/;";
+		#	proxy_pass http://192.168.10.1;
+		#}
+		if ($cookie_redirect = "switch") {
+			add_header Set-Cookie "redirect=switch;Path=/;";
+			proxy_pass http://192.168.10.2;
+		}
+		if ($cookie_redirect = "kodi") {
+			add_header Set-Cookie "redirect=kodi;Path=/;";
+			proxy_pass http://192.168.10.5;
+		}
+		if ($cookie_redirect = "poe") {
+			add_header Set-Cookie "redirect=poe;Path=/;";
+			proxy_pass http://192.168.10.6;
+		}
+		auth_basic $auth_basic;
 	}
-
 	# Nginx
 	location /nginx {
 		stub_status on;
+		add_header Set-Cookie "redirect=none;Path=/;";
 	}
-
 	# Ping-Pong
 	location /ping {
+		auth_basic off;
 		return 200 'pong';
 		add_header Content-Type text/plain;
-		auth_basic off;
+		add_header Set-Cookie "redirect=none;Path=/;";
 	}
-
 	# ShellInABox
 	location /shell {
+		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass http://localhost:4200/;
 	}
-
 	# Files
-	location /files {
+	location /files/ {
 		autoindex on;
-		alias /home/osmc;
-		#client_body_temp_path /media/HDD/tmp/dav;
-		#dav_methods PUT DELETE MKCOL COPY MOVE;
-		##dav_ext_methods PROPFIND OPTIONS;
-		#dav_access user:rw group:rw all:rw;
-		#create_full_put_path on;
-		#min_delete_depth 2;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		alias /home/osmc/;
 	}
-
-	location /cloud {
-		alias /home/osmc;
-		try_files $uri $uri/ /index.php$is_args$args;
-
-		location ~ \.php$ {
-			include snippets/fastcgi-php.conf;
-			fastcgi_param SCRIPT_FILENAME $request_filename;
-			fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
-		}
+	# Explore
+	location /explore/ {
+		fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/tinyfilemanager/tinyfilemanager.php/$query_string;
+		include fastcgi_params;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		alias /home/osmc/;
 	}
-
-	# Deluge
-	#location /deluge {
-	#	proxy_pass http://192.168.100.2:8112/;
-	#	proxy_set_header  X-Deluge-Base "/deluge/";
+	# Box
+	#location /box/ {
+	#	auth_basic off;
+	#	add_header Set-Cookie "redirect=box;Path=/;";
+	#	proxy_pass http://192.168.10.1/;
 	#}
-
+	# Switch
+	location /switch/ {
+		add_header Set-Cookie "redirect=switch;Path=/;";
+		proxy_pass http://192.168.10.2/;
+	}
+	# Jeedom
+	location /jeedom/ {
+		auth_basic off;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		proxy_pass http://192.168.10.4/;
+	}
+	# Movies
+	location /movies/ {
+		auth_basic off;
+		autoindex on;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		alias /home/public/Movies/;
+	}
+	# Musics
+	location /music/ {
+		auth_basic off;
+		autoindex on;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		alias /home/public/Music/;
+	}
+	# Pictures
+	location /pictures/ {
+		autoindex on;
+		add_header Set-Cookie "redirect=none;Path=/;";
+		alias /home/osmc/Pictures/;
+	}
 	# Transmission
 	location /transmission {
 		proxy_http_version 1.1;
 		proxy_set_header Connection "";
 		proxy_pass_header X-Transmission-Session-Id;
 		proxy_pass http://192.168.100.2:9091;
-		auth_basic_user_file /etc/nginx/.htpasswd;
 	}
-
-	# Orange                                               
-	#location /orange/ {                                        
-	#	proxy_pass http://192.168.10.1;                     
-	#}
-	#location /homeAuthentication.html {
-	#	proxy_pass http://192.168.10.1;
-	#}
-
 	# Kodi Web interface
-	location /addons {
-		proxy_pass http://localhost:8080;
-	}
-	location /jsonrpc {
-		proxy_pass http://localhost:8080;
-	}
-	location /image {
-		proxy_pass http://localhost:8080;
-	}
-	location /vfs {
-		proxy_pass http://localhost:8080;
-	}
-
-	# Bourdilot
-	#location ~ ^/bourdilot(/.*)?$ {
-	#	resolver_timeout 30s;
-	#	resolver 192.168.10.1 valid=30s;
-	#	set $bourdilot_upstream "bourdilot.no-ip.org";
-	#	proxy_pass http://$bourdilot_upstream$1$is_args$args;
-	#}
-
-	# Camera Salon
-	location /camsalon/ {
+        location /kodi/ {
+		add_header Set-Cookie "redirect=kodi;Path=/;";
+                proxy_pass http://192.168.10.5:8080/;
+        }
+	# Poe
+	location /poe/ {
+		add_header Set-Cookie "redirect=poe;Path=/;";
 		proxy_pass http://192.168.10.6/;
 	}
 	# Camera Entry
 	location /camentry/ {
+		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass http://192.168.10.151/;
 	}
 	# Camera Facade
 	location /camfacade/ {
+		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass http://192.168.10.152/;
 	}
-	# Jeedom
-	location /jeedom/ {
-		auth_basic off;
-		proxy_pass http://192.168.10.4/;
+	# Camera Terrasse
+	location /camterrasse/ {
+		add_header Set-Cookie "redirect=none;Path=/;";
+		proxy_pass http://192.168.10.153/;
 	}
-	# LbGate
-	#location /lbgate/ {
-	#	auth_basic off;
-	#	proxy_pass http://192.168.10.4:8444/;
-	#}
-	location /cams/ {
-		# Disable gzip (it makes scripts feel slower since they have to complete
-		# before getting gzipped
+	# Cameras
+	location /cameras/ {
 		gzip off;
-		auth_basic off;
-		# Set the root to /usr/lib (inside this location this means that we are
-		# giving access to the files under /usr/lib/cgi-bin)
-		alias /home/osmc/workspace/reolink/;
-		# Fastcgi socket
 		fastcgi_pass unix:/var/run/fcgiwrap.socket;
-		# Fastcgi parameters, include the standard ones
-		include /etc/nginx/fastcgi_params;
-		fastcgi_buffering off;
-		fastcgi_read_timeout 120s;
-		fastcgi_send_timeout 120s;
-		# Adjust non standard parameters (SCRIPT_FILENAME)
-		fastcgi_param SCRIPT_FILENAME $request_filename;
-        }
-	# Movies
-	location /movies {
-		autoindex on;
-		alias /home/osmc/Movies;
-		#client_body_temp_path /media/HDD/tmp/dav;
-		##dav_ext_methods PROPFIND OPTIONS;
-		auth_basic off;
-		#auth_basic_user_file /etc/nginx/.htpasswd_movies;
+		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/reolink/index.py;
+		include fastcgi_params;
+		add_header Set-Cookie "redirect=none;Path=/;";
 	}
-	# Musics
-	location /music {
-		autoindex on;
-		alias /home/osmc/Music;
-		#client_body_temp_path /media/HDD/tmp/dav;
-		##dav_ext_methods PROPFIND OPTIONS;
-		auth_basic off;
-		#auth_basic_user_file /etc/nginx/.htpasswd_music;
-	}
-	# Pictures
-	location /pictures {
-		autoindex on;
-		alias /home/osmc/Pictures;
-		#client_body_temp_path /media/HDD/tmp/dav;
-		##dav_ext_methods PROPFIND OPTIONS;
-		#auth_basic_user_file /etc/nginx/.htpasswd_pictures;
-	}
-	# Cameras Bourdilot
-	#location /camsbt {
-	#	autoindex on;
-	#	alias /media/HDD/camsbt;
-	#	client_body_temp_path /media/HDD/tmp/dav;
-	#	dav_methods PUT DELETE MKCOL COPY MOVE;
-	#	##dav_ext_methods PROPFIND OPTIONS;
-	#	dav_access user:rw group:rw all:rw;
-	#	create_full_put_path on;
-	#	min_delete_depth 2;
-	#	auth_basic_user_file /etc/nginx/.htpasswd_camsbt;
-	#}
 }
 

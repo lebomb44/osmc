@@ -116,7 +116,7 @@ class CustomHandler(http.server.BaseHTTPRequestHandler):
 
 
 monitoring = Monitoring("Monitoring")
-http2serial = http.server.HTTPServer(("", settings.HTTPD_PORT), CustomHandler)
+http2serial = http.server.ThreadingHTTPServer(("", settings.HTTPD_PORT), CustomHandler)
 
 
 def exit():
