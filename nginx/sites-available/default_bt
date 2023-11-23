@@ -35,105 +35,62 @@ server {
         auth_basic "Restricted";                                              
         auth_basic_user_file /etc/nginx/.htpasswd;
 	location / {
-		root /etc/nginx/html;
-		add_header Set-Cookie "redirect=none;Path=/;";
-		if ($cookie_redirect = "box") {
-			add_header Set-Cookie "redirect=box;Path=/;";
+		#root /etc/nginx/html;
+		set $auth_basic Restricted;
+		set $proxy_pass none;
+		if (-f /dev/shm/_redirect_box_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.1;
 		}
-		if ($cookie_redirect = "wifi") {
-			add_header Set-Cookie "redirect=wifi;Path=/;";
+		if (-f /dev/shm/_redirect_wifi_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.2;
 		}
-		if ($cookie_redirect = "kodi") {
-			add_header Set-Cookie "redirect=kodi;Path=/;";
+		if (-f /dev/shm/_redirect_kodi_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.5;
 		}
-		if ($cookie_redirect = "poe") {
-			add_header Set-Cookie "redirect=poe;Path=/;";
+		if (-f /dev/shm/_redirect_poe_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.6;
 		}
-		if ($cookie_redirect = "salon") {
-			add_header Set-Cookie "redirect=salon;Path=/;";
+		if (-f /dev/shm/_redirect_salon_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.151;
 		}
-		if ($cookie_redirect = "couloir") {
-			add_header Set-Cookie "redirect=couloir;Path=/;";
+		if (-f /dev/shm/_redirect_couloir_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.152;
 		}
-		if ($cookie_redirect = "cuisine") {
-			add_header Set-Cookie "redirect=cuisine;Path=/;";
+		if (-f /dev/shm/_redirect_cuisine_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.153;
 		}
-		if ($cookie_redirect = "arriere") {
-			add_header Set-Cookie "redirect=arriere;Path=/;";
+		if (-f /dev/shm/_redirect_arriere_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.154;
 		}
-		if ($cookie_redirect = "avant") {
-			add_header Set-Cookie "redirect=avant;Path=/;";
+		if (-f /dev/shm/_redirect_avant_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.155;
 		}
-		if ($cookie_redirect = "panoramix") {
-			add_header Set-Cookie "redirect=panoramix;Path=/;";
+		if (-f /dev/shm/_redirect_panoramix_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.158;
 		}
-		if ($cookie_redirect = "entree") {
-			add_header Set-Cookie "redirect=entree;Path=/;";
+		if (-f /dev/shm/_redirect_entree_) {
+			set $auth_basic off;
 			proxy_pass http://192.168.10.159;
 		}
 	}
 
-	# Cam salon
-	location /salon/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=salon;Path=/;";
-		proxy_pass http://192.168.10.151/;
-	}
-	# Cam couloir
-	location /couloir/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=couloir;Path=/;";
-		proxy_pass http://192.168.10.152/;
-	}
-	# Cam cuisine
-	location /cuisine/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=cuisine;Path=/;";
-		proxy_pass http://192.168.10.153/;
-	}
-	# Cam arriere
-	location /arriere/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=arriere;Path=/;";
-		proxy_pass http://192.168.10.154/;
-	}
-	# Cam avant
-	location /avant/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=avant;Path=/;";
-		proxy_pass http://192.168.10.155/;
-	}
 	# Cam chambre
 	location /chambre/ {
-		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass https://192.168.10.156/;
 	}
 	# Cam galerie
 	location /galerie/ {
-		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass http://192.168.10.157/;
-	}
-	# Cam panoramix
-	location /panoramix/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=panoramix;Path=/;";
-		proxy_pass http://192.168.10.158/;
-	}
-	# Cam entree
-	location /entree/ {
-		auth_basic off;
-		add_header Set-Cookie "redirect=entree;Path=/;";
-		proxy_pass http://192.168.10.159/;
 	}
 	# Cameras
 	location /cameras/ {
@@ -141,19 +98,16 @@ server {
 		fastcgi_pass unix:/var/run/fcgiwrap.socket;
 		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/reolink/index.py;
 		include fastcgi_params;
-		add_header Set-Cookie "redirect=none;Path=/;";
 	}
 	# Nginx
 	location /nginx {
-		add_header Set-Cookie "redirect=none;Path=/;";
 		stub_status on;
 	}
 	# Ping-Pong
 	location /ping {
+		auth_basic off;
 		return 200 'pong';
 		add_header Content-Type text/plain;
-		add_header Set-Cookie "redirect=none;Path=/;";
-		auth_basic off;
 	}
 	# ShellInABox
 	location /shell {
@@ -162,47 +116,31 @@ server {
 	# Files
 	location /files/ {
 		autoindex on;
-		add_header Set-Cookie "redirect=none;Path=/;";
 		alias /home/osmc/;
 	}
 	# Explore
 	location /explore/ {
-		alias /home/osmc/;
-		add_header Set-Cookie "redirect=none;Path=/;";
 		fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
 		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/tinyfilemanager/tinyfilemanager.php/$query_string;
 		include fastcgi_params;
+		alias /home/osmc/;
 	}
 	# Movies 
 	location /movies/ {
+		auth_basic off;
 		autoindex on;
 		alias /media/HDD/Movies/;
-		auth_basic off;
-	}
-	# Box
-	location /box/ {
-		add_header Set-Cookie "redirect=box;Path=/;";
-		proxy_pass http://192.168.10.1/;
-	}
-	# Wifi
-	location /wifi/ {
-		add_header Set-Cookie "redirect=wifi;Path=/;";
-		proxy_pass http://192.168.10.2/;
 	}
 	# Jeedom
 	location /jeedom/ {
 		auth_basic off;
-		add_header Set-Cookie "redirect=none;Path=/;";
 		proxy_pass http://192.168.10.4:8080/;
 	}
-	# Kodi Web interface
-        location /kodi/ {
-		add_header Set-Cookie "redirect=kodi;Path=/;";
-                proxy_pass http://192.168.10.5:8080/;
-        }
-	# Poe
-	location /poe/ {
-		add_header Set-Cookie "redirect=poe;Path=/;";
-		proxy_pass http://192.168.10.6/;
+	# Redirect
+	location /redirect/ {
+		gzip off;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+		fastcgi_param SCRIPT_FILENAME /etc/nginx/scripts/redirect.sh;
+		include fastcgi_params;
 	}
 }
