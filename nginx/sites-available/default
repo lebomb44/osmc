@@ -1,3 +1,19 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+#
+
 server {
 	listen 80 default_server;
 	server_tokens off;
@@ -30,15 +46,19 @@ server {
 			set $proxy_pass http://192.168.10.5:8080;
 		}
 		if (-f /dev/shm/_redirect_poe_) {
+			set $auth_basic off;
 			set $proxy_pass http://192.168.10.6;
 		}
 		if (-f /dev/shm/_redirect_camentry_) {
+			set $auth_basic off;
 			set $proxy_pass http://192.168.10.151;
 		}
 		if (-f /dev/shm/_redirect_camfacade_) {
+			set $auth_basic off;
 			set $proxy_pass http://192.168.10.152;
 		}
 		if (-f /dev/shm/_redirect_camterrasse_) {
+			set $auth_basic off;
 			set $proxy_pass http://192.168.10.153;
 		}
 		auth_basic $auth_basic;
@@ -49,6 +69,14 @@ server {
 			root /etc/nginx/html;
 		}
 		expires 1s;
+	}
+
+	# Cameras
+	location /cameras/ {
+		gzip off;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/reolink/index.py;
+		include fastcgi_params;
 	}
 	# Nginx
 	location /nginx {
@@ -62,7 +90,7 @@ server {
 	}
 	# ShellInABox
 	location /shell {
-		proxy_pass http://localhost:4200/;
+		proxy_pass http://127.0.0.1:4200/;
 	}
 	# Files
 	location /files/ {
@@ -75,20 +103,6 @@ server {
 		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/tinyfilemanager/tinyfilemanager.php/$query_string;
 		include fastcgi_params;
 		alias /home/osmc/;
-	}
-	# Box
-	#location /box/ {
-	#	auth_basic off;
-	#	proxy_pass http://192.168.10.1/;
-	#}
-	# Switch
-	#location /switch/ {
-	#	proxy_pass http://192.168.10.2/;
-	#}
-	# Jeedom
-	location /jeedom/ {
-		auth_basic off;
-		proxy_pass http://192.168.10.4/;
 	}
 	# Movies
 	location /movies/ {
@@ -107,39 +121,17 @@ server {
 		autoindex on;
 		alias /home/osmc/Pictures/;
 	}
+	# Jeedom
+	location /jeedom/ {
+		auth_basic off;
+		proxy_pass http://192.168.10.4/;
+	}
 	# Transmission
 	location /transmission {
 		proxy_http_version 1.1;
 		proxy_set_header Connection "";
 		proxy_pass_header X-Transmission-Session-Id;
 		proxy_pass http://192.168.100.2:9091;
-	}
-	# Kodi Web interface
-	#location /kodi/ {
-	#	proxy_pass http://192.168.10.5:8080/;
-	#}
-	# Poe
-	#location /poe/ {
-	#	proxy_pass http://192.168.10.6/;
-	#}
-	# Camera Entry
-	#location /camentry/ {
-	#	proxy_pass http://192.168.10.151/;
-	#}
-	# Camera Facade
-	#location /camfacade/ {
-	#	proxy_pass http://192.168.10.152/;
-	#}
-	# Camera Terrasse
-	#location /camterrasse/ {
-	#	proxy_pass http://192.168.10.153/;
-	#}
-	# Cameras
-	location /cameras/ {
-		gzip off;
-		fastcgi_pass unix:/var/run/fcgiwrap.socket;
-		fastcgi_param SCRIPT_FILENAME /home/osmc/workspace/reolink/index.py;
-		include fastcgi_params;
 	}
 	# Redirect
 	location /redirect/ {
@@ -149,4 +141,3 @@ server {
 		include fastcgi_params;
 	}
 }
-

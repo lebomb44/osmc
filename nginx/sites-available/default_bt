@@ -133,7 +133,7 @@ server {
 		include fastcgi_params;
 		alias /home/osmc/;
 	}
-	# Movies 
+	# Movies
 	location /movies/ {
 		auth_basic off;
 		autoindex on;
@@ -142,7 +142,7 @@ server {
 	# Jeedom
 	location /jeedom/ {
 		auth_basic off;
-		proxy_pass http://192.168.10.4:8080/;
+		proxy_pass http://192.168.10.4/;
 	}
 	# Redirect
 	location /redirect/ {
