@@ -82,6 +82,14 @@ server {
 			set $auth_basic off;
 			proxy_pass http://192.168.10.159;
 		}
+		auth_basic $auth_basic;
+		if ($proxy_pass != none) {
+			proxy_pass $proxy_pass;
+		}
+		if ($proxy_pass = none) {
+			root /etc/nginx/html;
+		}
+		expires 1s;
 	}
 
 	# Cam chambre
