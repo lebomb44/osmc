@@ -40,47 +40,47 @@ server {
 		set $proxy_pass none;
 		if (-f /dev/shm/_redirect_box_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.1;
+			set $proxy_pass http://192.168.10.1;
 		}
 		if (-f /dev/shm/_redirect_wifi_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.2;
+			set $proxy_pass http://192.168.10.2;
 		}
 		if (-f /dev/shm/_redirect_kodi_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.5;
+			set $proxy_pass http://192.168.10.5:8080;
 		}
 		if (-f /dev/shm/_redirect_poe_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.6;
+			set $proxy_pass http://192.168.10.6;
 		}
 		if (-f /dev/shm/_redirect_salon_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.151;
+			set $proxy_pass http://192.168.10.151;
 		}
 		if (-f /dev/shm/_redirect_couloir_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.152;
+			set $proxy_pass http://192.168.10.152;
 		}
 		if (-f /dev/shm/_redirect_cuisine_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.153;
+			set $proxy_pass http://192.168.10.153;
 		}
 		if (-f /dev/shm/_redirect_arriere_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.154;
+			set $proxy_pass http://192.168.10.154;
 		}
 		if (-f /dev/shm/_redirect_avant_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.155;
+			set $proxy_pass http://192.168.10.155;
 		}
 		if (-f /dev/shm/_redirect_panoramix_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.158;
+			set $proxy_pass http://192.168.10.158;
 		}
 		if (-f /dev/shm/_redirect_entree_) {
 			set $auth_basic off;
-			proxy_pass http://192.168.10.159;
+			set $proxy_pass http://192.168.10.159;
 		}
 		auth_basic $auth_basic;
 		if ($proxy_pass != none) {
