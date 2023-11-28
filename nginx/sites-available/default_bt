@@ -142,7 +142,7 @@ server {
 	# Jeedom
 	location /jeedom/ {
 		auth_basic off;
-		proxy_pass http://192.168.10.4/;
+		proxy_pass https://192.168.10.4/;
 	}
 	# Redirect
 	location /redirect/ {
