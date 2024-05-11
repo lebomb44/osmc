@@ -560,6 +560,6 @@ osmc@osmc:~$ sudo mkdir /home/public/Music
 Mount folders at startup
 ```shell
 osmc@osmc:~$ sudo vi /etc/fstab
-/media/HDD/Movies /home/public/Movies none bind,ro
-/media/HDD/Music /home/public/Music none bind,ro
+/media/HDD/Movies /home/public/Movies none nofail,bind,ro
+/media/HDD/Music /home/public/Music none nofail,bind,ro
 ```
