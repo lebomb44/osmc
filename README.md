@@ -19,7 +19,11 @@ osmc@osmc:~$ sudo blkid /dev/sda1
 
 # Automount the HDD. Edit the /etc/fstab and add the following line:
 ```shell
-UUID=7d59e0e6-f886-458f-83ed-0841885af0a2 /media/HDD ext4 defaults,noatime 0 2
+UUID=7d59e0e6-f886-458f-83ed-0841885af0a2 /media/HDD ext4 defaults,noatime,noauto,nofail,x-systemd.device-timeout=9 0 2
+UUID=c00c47b7-db3d-4d2d-81ee-d6817cbb8344 /media/HDD ext4 defaults,noatime,noauto,nofail,x-systemd.device-timeout=9 0 2
+/media/HDD/Movies /home/public/Movies none noauto,nofail,x-systemd.device-timeout=9,bind,ro
+/media/HDD/Music /home/public/Music none noauto,nofail,x-systemd.device-timeout=9,bind,ro
+
 ```
 
 # Reboot to test the automount
